@@ -1,0 +1,60 @@
+﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <ProjectGuid>{ED4B45BC-CB3C-44F6-925F-CFAC5DB49C31}</ProjectGuid>
+    </PropertyGroup>
+    <ItemGroup>
+        <Projects Include="Source\Murphy.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="Demos\00_Primer\Murphy.Demos.Primer.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="Tests\Murphy.Tests.dproj">
+            <Dependencies/>
+        </Projects>
+    </ItemGroup>
+    <ProjectExtensions>
+        <Borland.Personality>Default.Personality.12</Borland.Personality>
+        <Borland.ProjectType/>
+        <BorlandProject>
+            <Default.Personality/>
+        </BorlandProject>
+    </ProjectExtensions>
+    <Target Name="Murphy">
+        <MSBuild Projects="Source\Murphy.dproj"/>
+    </Target>
+    <Target Name="Murphy:Clean">
+        <MSBuild Projects="Source\Murphy.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="Murphy:Make">
+        <MSBuild Projects="Source\Murphy.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="Murphy_Demos_Primer">
+        <MSBuild Projects="Demos\00_Primer\Murphy.Demos.Primer.dproj"/>
+    </Target>
+    <Target Name="Murphy_Demos_Primer:Clean">
+        <MSBuild Projects="Demos\00_Primer\Murphy.Demos.Primer.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="Murphy_Demos_Primer:Make">
+        <MSBuild Projects="Demos\00_Primer\Murphy.Demos.Primer.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="Murphy_Tests">
+        <MSBuild Projects="Tests\Murphy.Tests.dproj"/>
+    </Target>
+    <Target Name="Murphy_Tests:Clean">
+        <MSBuild Projects="Tests\Murphy.Tests.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="Murphy_Tests:Make">
+        <MSBuild Projects="Tests\Murphy.Tests.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="Build">
+        <CallTarget Targets="Murphy;Murphy_Demos_Primer;Murphy_Tests"/>
+    </Target>
+    <Target Name="Clean">
+        <CallTarget Targets="Murphy:Clean;Murphy_Demos_Primer:Clean;Murphy_Tests:Clean"/>
+    </Target>
+    <Target Name="Make">
+        <CallTarget Targets="Murphy:Make;Murphy_Demos_Primer:Make;Murphy_Tests:Make"/>
+    </Target>
+    <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
+</Project>
