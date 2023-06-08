@@ -1,5 +1,5 @@
 <div>  
-  <img alt="Murphy Library for Delphi" height="224" src="./Assets/logo-murphy.png">
+  <img alt="Murphy Library for Delphi" width="100%" src="./Assets/logo-murphy.png">
 </div>
 <br />
 
