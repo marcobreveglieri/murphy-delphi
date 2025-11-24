@@ -13,7 +13,8 @@ uses
   DUnitX.Loggers.Console,
   {$ENDIF}
   DUnitX.TestFramework,
-  Murphy.Tests.Retry in 'Murphy.Tests.Retry.pas';
+  Murphy.Tests.Retry in 'Murphy.Tests.Retry.pas',
+  Murphy.Tests.Timeout in 'Murphy.Tests.Timeout.pas';
 
 begin
   ReportMemoryLeaksOnShutdown := True;
@@ -45,16 +46,12 @@ begin
 
     {$IFNDEF CI}
     //We don't want this happening when running under CI.
-    if TDUnitX.Options.ExitBehavior = TDUnitXExitBehavior.Pause then
-    begin
-      System.Write('Done.. press <Enter> key to quit.');
-      System.Readln;
-    end;
+    System.Write('Done.. press <Enter> key to quit.');
+    System.Readln;
     {$ENDIF}
   except
     on E: Exception do
       System.Writeln(E.ClassName, ': ', E.Message);
   end;
 {$ENDIF}
-
 end.
