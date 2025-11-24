@@ -9,7 +9,8 @@ uses
   Samples.Retry in 'Samples.Retry.pas',
   Samples.CircuitBreaker in 'Samples.CircuitBreaker.pas',
   Samples.Fallback in 'Samples.Fallback.pas',
-  Samples.RateLimit in 'Samples.RateLimit.pas';
+  Samples.RateLimit in 'Samples.RateLimit.pas',
+  Samples.Timeout in 'Samples.Timeout.pas';
 
 begin
   ReportMemoryLeaksOnShutdown := True;
@@ -23,6 +24,7 @@ begin
       Writeln('F) Fallback');
       Writeln('L) Rate Limit');
       Writeln('R) Retry');
+      Writeln('T) Timeout');
       Writeln('             Q) quit');
       Writeln('--------------------');
       Writeln;
@@ -46,6 +48,7 @@ begin
         'F': RunFallbackSample;
         'L': RunRateLimitSample;
         'R': RunRetrySample;
+        'T': RunTimeoutSample;
       end;
 
     end;
