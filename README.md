@@ -1,54 +1,194 @@
-<div>  
+<div>
   <img alt="Murphy Library for Delphi" width="100%" src="./Assets/logo-murphy.png">
 </div>
 <br />
 
 # Murphy for Delphi
 
-## Overview
+**Murphy for Delphi** is a Chaos Engineering library that implements resilience and fault-tolerance patterns for Delphi applications. Named after Murphy's Law ("Anything that can go wrong will go wrong"), it helps you build systems that gracefully handle failures like network timeouts, service outages, and resource exhaustion.
 
-**Murphy for Delphi** aims to be a comprehensive library designed to allow developers with the most common architectural patterns tipically implemented in *Chaos Engineering* scenarios.
+> **⚠️ Early Development Notice**
+> This library is in early development (v0.1.0) and under active refactoring. Expect substantial changes in upcoming releases.
 
-This library provides ready-to-use classes that simplify the implementation of Chaos Engineering patterns in Delphi-based projects, ranging from desktop to service applications.
+## Why Murphy?
 
-By leveraging Murphy library, developers and engineers can proactively test and improve the reliability and resilience of their software systems. The code empower them to uncover the most common vulnerabilities, optimize system behavior, and ensure that their applications can withstand real-world chaos scenarios, ultimately resulting in improved user experiences and increased customer satisfaction.
+Modern applications face inevitable failures: network issues, service unavailability, resource limits, and external dependencies going down. Murphy provides battle-tested patterns to handle these scenarios without writing complex error-handling code from scratch.
 
-*** !!! Warning !!! This library is released at a very, very, very early stage and under heavy development and refactoring: you should expect possible substantial changes in the next following days. ***
+```pascal
+// Automatic retry with exponential backoff - just a few lines of code!
+var
+  RetryPolicy: IRetryPolicy;
+begin
+  RetryPolicy := TRetryBuilder.Create
+    .Handle([EIdHTTPProtocolException, EIdSocketError])
+    .Retry(3)
+    .Wait(TTimeSpan.FromSeconds(2))
+    .Build;
 
-### What is Chaos Engineering
+  RetryPolicy.Execute(
+    procedure
+    begin
+      // Your code here - automatically retried on failure
+      HTTP.Get('https://api.example.com/data');
+    end);
+end;
+```
 
-With the increasing complexity of modern software systems, it has become imperative to proactively identify and address potential issues before they impact the end-users. By integrating Chaos Engineering practices into the development lifecycle, developers can build resilient and robust systems that can withstand unexpected failures and disruptions.
+## Key Features
 
-## Getting Started
+- **🎯 Ready-to-Use Patterns** - Retry, Circuit Breaker, Fallback, and Rate Limit implementations
+- **🔗 Fluent API** - Intuitive, chainable builder pattern for easy configuration
+- **💪 Type-Safe** - Leverages Delphi generics for compile-time type safety
+- **🎭 Exception Filtering** - Handle only specific exception types
+- **🧪 Testable** - Built-in test mode eliminates delays for fast unit testing
+- **🔄 Composable** - Combine multiple patterns for sophisticated resilience strategies
+- **📦 Zero Dependencies** - Only requires Delphi RTL
 
-*Section still under development*
+## Installation
 
-### ⚙ Install the library
+### Using Boss Package Manager (Recommended)
 
-Installation is done using the [`boss install`](https://github.com/HashLoad/boss) command:
-``` sh
+```bash
 boss install marcobreveglieri/murphy-delphi
 ```
-If you choose to install it manually, download the source code from GitHub simply add the following folders to your project, in *Project > Options > Resource Compiler > Directories and Conditionals > Include file search path*
-```
-murphy-delphi/Source
-```
+
+### Manual Installation
+
+1. Download or clone the repository from GitHub
+2. Add `murphy-delphi/Source` to your project's search path:
+   - **Project > Options > Delphi Compiler > Search path**
+   - Or add to IDE's global library path: **Tools > Options > Language > Delphi > Library**
 
 ## Patterns
 
-*Murphy for Delphi* currently supports the following **patterns**:
+Murphy implements four essential resilience patterns:
 
-+ Circuit Breaker
-+ Fallback
-+ Rate Limit
-+ Retry Pattern
+### Retry Pattern
 
-This library is still under heavy development, so new patterns and refactoring are coming soon!
+Automatically retries failed operations with configurable delays - perfect for transient failures.
 
-## Delphi compatibility
+```pascal
+uses Murphy.Policy.Retry;
 
-This library works with **Delphi 11 Alexandria** as it makes use of advanced features of Delphi language, but with some slight changes it maybe could work in previous versions.
+var
+  Policy: IRetryPolicy;
+begin
+  Policy := TRetryBuilder.Create
+    .Handle(EDatabaseError)
+    .Retry(3)
+    .Wait(TTimeSpan.FromSeconds(1))
+    .Build;
 
-## Additional links
+  Policy.Execute(procedure begin Database.Connect; end);
+end;
+```
 
-+ [Chaos Engineering Principles](https://principlesofchaos.org/)
+**Use cases**: Network requests, database connections, temporary service unavailability
+
+### Circuit Breaker Pattern
+
+Prevents cascading failures by blocking calls to failing services temporarily.
+
+```pascal
+uses Murphy.Policy.CircuitBreaker;
+
+var
+  Policy: ICircuitBreakerPolicy;
+begin
+  Policy := TCircuitBreakerBuilder.Create
+    .Handle(Exception)
+    .Fail(5)                              // Open after 5 failures
+    .Within(TTimeSpan.FromSeconds(30))   // Auto-close after 30s
+    .Build;
+
+  Policy.Execute(procedure begin CallExternalService; end);
+end;
+```
+
+**Use cases**: External API calls, protecting downstream services, fast-fail scenarios
+
+### Fallback Pattern
+
+Provides alternative results when operations fail - return cached data or defaults.
+
+```pascal
+uses Murphy.Policy.Fallback;
+
+var
+  Policy: IFallbackPolicy<string>;
+  Result: string;
+begin
+  Policy := TFallbackBuilder<string>.Create
+    .Handle(Exception)
+    .Fallback(function: string
+              begin
+                Result := GetCachedData; // Return fallback value
+              end)
+    .Build;
+
+  Result := Policy.Execute(function: string
+                            begin
+                              Result := FetchFromAPI;
+                            end);
+end;
+```
+
+**Use cases**: API with fallback to cache, default values, degraded functionality
+
+### Rate Limit Pattern
+
+Controls operation rate to prevent resource exhaustion and API throttling.
+
+```pascal
+uses Murphy.Policy.RateLimit;
+
+var
+  Policy: IRateLimitPolicy;
+begin
+  Policy := TRateLimitBuilder.Create
+    .Allow(100)                          // 100 calls
+    .Within(TTimeSpan.FromMinutes(1))   // Per minute
+    .Build;
+
+  Policy.Execute(procedure begin MakeAPICall; end);
+end;
+```
+
+**Use cases**: API rate limiting, resource protection, preventing system overload
+
+## Quick Start
+
+1. **Install Murphy** using Boss or manually
+2. **Add the unit** to your uses clause: `Murphy.Policy.Retry`
+3. **Create a policy** using the builder pattern
+4. **Execute your code** within the policy
+
+See the [Getting Started Guide](Docs/02-Getting-Started.md) for detailed examples and the [Demo Application](Demos/00_Primer) for interactive examples of all patterns.
+
+## Documentation
+
+Comprehensive documentation is available in the [Wiki section](https://github.com/marcobreveglieri/murphy-delphi/wiki).
+
+## Demo Application
+
+Explore the demo in `Demos/00_Primer/Murphy.Demos.Primer.dpr` to see the patterns in action with some examples.
+
+## License
+
+Murphy for Delphi is released under the MIT License. See the [LICENSE](LICENSE) file for details.
+
+## Contributing
+
+Contributions are welcome! Please see the [Contributing Guide](Docs/Advanced/Contributing.md) for details.
+
+## Support & Resources
+
+- **GitHub Repository**: [marcobreveglieri/murphy-delphi](https://github.com/marcobreveglieri/murphy-delphi)
+- **Issues & Bug Reports**: [GitHub Issues](https://github.com/marcobreveglieri/murphy-delphi/issues)
+- **Chaos Engineering Principles**: [principlesofchaos.org](https://principlesofchaos.org/)
+
+---
+
+> [!IMPORTANT]
+>
+> Some of this documentation was generated or reworked with an LLM tool (Claude). It may therefore contain errors and/or inaccuracies. If you encounter any, please report the issue or propose a fix by submitting a pull request.
