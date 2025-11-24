@@ -38,6 +38,7 @@ contains
   Murphy.Policy.CircuitBreaker in 'Murphy.Policy.CircuitBreaker.pas',
   Murphy.Policy.Fallback in 'Murphy.Policy.Fallback.pas',
   Murphy.Resources.Strings in 'Murphy.Resources.Strings.pas',
-  Murphy.Policy.RateLimit in 'Murphy.Policy.RateLimit.pas';
+  Murphy.Policy.RateLimit in 'Murphy.Policy.RateLimit.pas',
+  Murphy.Policy.Timeout in 'Murphy.Policy.Timeout.pas';
 
 end.
