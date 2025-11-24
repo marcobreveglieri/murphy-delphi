@@ -11,8 +11,9 @@ uses
   TestInsight.DUnitX,
   {$ELSE}
   DUnitX.Loggers.Console,
-  {$ENDIF}
+  {$ENDIF }
   DUnitX.TestFramework,
+  Murphy.Tests.Fallback in 'Murphy.Tests.Fallback.pas',
   Murphy.Tests.Retry in 'Murphy.Tests.Retry.pas',
   Murphy.Tests.Timeout in 'Murphy.Tests.Timeout.pas';
 
